@@ -8,7 +8,7 @@
 
 library(ggplot2)
 library(nlme)
-library(multicomp)
+library(emmeans)
 
 # Setting the file path for Google Drive:
 path.google <- "~/Google Drive/My Drive/URF-REU 2026 - Moreno - Xylem Vessels/"
@@ -31,6 +31,7 @@ df.rings$tree <- as.factor(df.rings$tree)
 df.rings$radius <- as.factor(df.rings$radius)
 df.rings$treeID <- paste0(df.rings$site, df.rings$tree)
 df.rings$vessel.density <- df.rings$vessel.n/df.rings$EW.area
+df.rings$block <- as.factor(ifelse(nchar(as.vector(df.rings$tree))==3, substr(df.rings$tree, 1, 1), 0))
 summary(df.rings)
 
 df.rings <- merge(df.rings, df.trees[,c("treeID", "Mother.Tree", "Source.State", "height", "diameter", "DBH", "Weight")], all.x=T, all.y=F)
@@ -77,17 +78,20 @@ dev.off()
 
 # Doing some ANOVAS to see if there any difference
 # y = mx+b
-lme.size <- lme(vessel.AreaMean ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
-summary(lme.size)
+lme.size <- lme(vessel.AreaMean ~ Source.State, random=list(year=~1, block=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 anova(lme.size)
+summary(lme.size)
+emmeans(lme.size, pairwise~Source.State, adjust="tukey")
+
 
 lme.va <- lme(relVA ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
-summary(lme.va)
 anova(lme.va)
+summary(lme.va)
+emmeans(lme.va, pairwise~Source.State, adjust="tukey")
 
-lme.dens <- lme(vessel.density ~ relevel(Source.State, "Illinois"), random=list(year=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
-summary(lme.dens)
+lme.dens <- lme(vessel.density ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 anova(lme.dens)
+summary(lme.dens)
+emmeans(lme.dens, pairwise~Source.State, adjust="tukey")
 
-eemeans(lme.dens)
 

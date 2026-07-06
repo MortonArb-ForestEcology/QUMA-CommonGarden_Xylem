@@ -22,7 +22,10 @@ f.fiji <- dir(path.fiji, ".csv")
 df.rings <- data.frame()
 df.vessels <- data.frame()
 
+pb <- txtProgressBar(min = 0, max = length(f.fiji), style = 3) # progress bar
+
 for(fNOW in 1:length(f.fiji)){
+  
   # Opening a file to look at it
   test <- read.csv(file.path(path.fiji, f.fiji[fNOW]))
   head(test)
@@ -86,8 +89,12 @@ df.rings$vessel.density <- df.rings$vessel.n/df.rings$EW.area
 summary(df.rings)
 summary(df.vessels)
 
+length(unique(df.rings$tree))
+
 write.csv(df.rings, file.path(path.out, "BurOakCG_RingData_combined.csv"), row.names=F)
 write.csv(df.vessels, file.path(path.out, "BurOakCG_VesselData_combined.csv"), row.names=F)
+
+
 
 # doing a couple quick exploratory graphs
 hist(df.rings$vessel.n)

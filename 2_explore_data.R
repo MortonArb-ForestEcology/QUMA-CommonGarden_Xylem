@@ -8,6 +8,8 @@
 
 library(ggplot2)
 library(nlme)
+library(multicomp)
+
 # Setting the file path for Google Drive:
 path.google <- "~/Google Drive/My Drive/URF-REU 2026 - Moreno - Xylem Vessels/"
 path.out <- file.path(path.google, "Analysis") # Where we want our outputs to live
@@ -28,6 +30,7 @@ df.rings$site <- as.factor(df.rings$site)
 df.rings$tree <- as.factor(df.rings$tree)
 df.rings$radius <- as.factor(df.rings$radius)
 df.rings$treeID <- paste0(df.rings$site, df.rings$tree)
+df.rings$vessel.density <- df.rings$vessel.n/df.rings$EW.area
 summary(df.rings)
 
 df.rings <- merge(df.rings, df.trees[,c("treeID", "Mother.Tree", "Source.State", "height", "diameter", "DBH", "Weight")], all.x=T, all.y=F)
@@ -42,6 +45,16 @@ plot.n
 png(file.path(path.out, "Vessels_n_byState.png"), height=4, width=6, units = "in", res=240)
 plot.n
 dev.off()
+
+# Plotting vessel density (vessels/area)
+plot.density <- ggplot(data=df.rings) +
+  facet_wrap(~year) +
+  geom_boxplot(aes(x=Source.State, y=vessel.density, fill=Source.State))
+plot.density
+png(file.path(path.out, "Vessels_Density_byState.png"), height=4, width=6, units = "in", res=240)
+plot.density
+dev.off()
+
 
 # Mean Area per vessel per year
 plot.areaMean <- ggplot(data=df.rings) +
@@ -63,6 +76,7 @@ dev.off()
 
 
 # Doing some ANOVAS to see if there any difference
+# y = mx+b
 lme.size <- lme(vessel.AreaMean ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 summary(lme.size)
 anova(lme.size)
@@ -70,3 +84,10 @@ anova(lme.size)
 lme.va <- lme(relVA ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 summary(lme.va)
 anova(lme.va)
+
+lme.dens <- lme(vessel.density ~ relevel(Source.State, "Illinois"), random=list(year=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
+summary(lme.dens)
+anova(lme.dens)
+
+eemeans(lme.dens)
+

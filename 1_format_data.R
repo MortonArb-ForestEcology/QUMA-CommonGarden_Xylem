@@ -82,6 +82,7 @@ for(fNOW in 1:length(f.fiji)){
   df.vessels <- rbind(df.vessels, test.vess)
 }
 df.rings$relVA <- df.rings$vessel.AreaTot/df.rings$EW.area
+df.rings$vessel.density <- df.rings$vessel.n/df.rings$EW.area
 summary(df.rings)
 summary(df.vessels)
 

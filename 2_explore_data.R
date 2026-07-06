@@ -78,18 +78,18 @@ dev.off()
 
 # Doing some ANOVAS to see if there any difference
 # y = mx+b
-lme.size <- lme(vessel.AreaMean ~ Source.State, random=list(year=~1, block=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
+lme.size <- lme(vessel.AreaMean ~ Source.State, random=list(year=~1, block=~1, Mother.Tree=~1, treeID=~1, radius=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 anova(lme.size)
 summary(lme.size)
 emmeans(lme.size, pairwise~Source.State, adjust="tukey")
 
 
-lme.va <- lme(relVA ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
+lme.va <- lme(relVA ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1, radius=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 anova(lme.va)
 summary(lme.va)
 emmeans(lme.va, pairwise~Source.State, adjust="tukey")
 
-lme.dens <- lme(vessel.density ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
+lme.dens <- lme(vessel.density ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1, radius=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 anova(lme.dens)
 summary(lme.dens)
 emmeans(lme.dens, pairwise~Source.State, adjust="tukey")

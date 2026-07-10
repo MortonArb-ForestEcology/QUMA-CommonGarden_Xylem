@@ -61,6 +61,7 @@ dev.off()
 plot.areaMean <- ggplot(data=df.rings) +
   facet_wrap(~year) +
   geom_boxplot(aes(x=Source.State, y=vessel.AreaMean, fill=Source.State))
+plot.areaMean
 
 png(file.path(path.out, "Vessels_meanArea_byState.png"), height=4, width=6, units = "in", res=240)
 plot.areaMean
@@ -78,18 +79,19 @@ dev.off()
 
 # Doing some ANOVAS to see if there any difference
 # y = mx+b
-lme.size <- lme(vessel.AreaMean ~ Source.State, random=list(year=~1, block=~1, Mother.Tree=~1, treeID=~1, radius=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
+# NOTE: Had to remove radius as a random effect --> had convergence issues
+lme.size <- lme(vessel.AreaMean ~ Source.State, random=list(year=~1, block=~1, Mother.Tree=~1, treeID=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 anova(lme.size)
 summary(lme.size)
 emmeans(lme.size, pairwise~Source.State, adjust="tukey")
 
 
-lme.va <- lme(relVA ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1, radius=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
+lme.va <- lme(relVA ~ Source.State, random=list(year=~1, block=~1, Mother.Tree=~1, treeID=~1, radius=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 anova(lme.va)
 summary(lme.va)
 emmeans(lme.va, pairwise~Source.State, adjust="tukey")
 
-lme.dens <- lme(vessel.density ~ Source.State, random=list(year=~1, Mother.Tree=~1, treeID=~1, radius=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
+lme.dens <- lme(vessel.density ~ Source.State, random=list(year=~1, block=~1, Mother.Tree=~1, treeID=~1, radius=~1), data=df.rings[df.rings$year %in% 2023:2025,], na.action = na.omit)
 anova(lme.dens)
 summary(lme.dens)
 emmeans(lme.dens, pairwise~Source.State, adjust="tukey")

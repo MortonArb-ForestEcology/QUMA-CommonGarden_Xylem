@@ -103,3 +103,4 @@ hist(df.rings$vessel.AreaTot)
 hist(df.rings$relVA)
 
 hist(df.vessels$Area)
+

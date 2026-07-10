@@ -35,6 +35,7 @@ df.rings$treeID <- paste0(df.rings$site, df.rings$tree)
 df.rings$vessel.density <- df.rings$vessel.n/df.rings$EW.area
 df.rings$block <- as.factor(ifelse(nchar(as.vector(df.rings$tree))==3, substr(df.rings$tree, 1, 1), 0))
 summary(df.rings)
+head(df.rings)
 
 # First getting things to the 1 number per year, then aggreagting the years to 1 number per tree
 df.ringAgg1 <- aggregate(cbind(vessel.n, vessel.density, vessel.AreaMean, relVA) ~ site + block + tree + treeID + year , data=df.rings[df.rings$year %in% 2023:2025,], FUN=mean, na.rm=T)
